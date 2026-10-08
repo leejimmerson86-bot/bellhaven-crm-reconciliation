@@ -1,0 +1,22 @@
+name: Bellhaven Daily Reconciliation
+
+on:
+  schedule:
+    - cron: "0 10 * * *" - cron: "0 10 * * *"  # runs daily at 10:00
+    workflow_dispatch:
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run reconciliation
+        env:
+          CRM_API_TOKEN: ${{ secrets.CRM_API_TOKEN }}
+          CRM_BASE_URL: https://analyst-assessment-production.up.railway.app/api/v1
+          BELLHAVEN_WEBSITE: https://analyst-assessment-production.up.railway.app
+        run: python -m app.reconciliation
